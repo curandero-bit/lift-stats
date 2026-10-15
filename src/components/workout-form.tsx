@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { BarbellCalculator } from "@/components/barbell-calculator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formatBarbellKg } from "@/lib/barbell";
 import type { AddEntryInput } from "@/hooks/use-workouts";
 
 const CUSTOM = "__custom__";
@@ -160,6 +162,13 @@ export function WorkoutForm({ exercises, onAdd }: WorkoutFormProps) {
           </Button>
         ))}
       </div>
+
+      <BarbellCalculator
+        onApply={(totalKg) => {
+          setWeight(formatBarbellKg(totalKg));
+          setError(null);
+        }}
+      />
 
       {error && (
         <p className="text-sm text-destructive" role="alert">
