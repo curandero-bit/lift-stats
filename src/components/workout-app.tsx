@@ -4,13 +4,18 @@ import { HistoryList } from "@/components/history-list";
 import { StatsPanel } from "@/components/stats-panel";
 import { WorkoutForm } from "@/components/workout-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useMemo } from "react";
 import { useWorkouts } from "@/hooks/use-workouts";
 import { todayEntries, totalReps } from "@/lib/stats";
 
 export function WorkoutApp() {
   const { entries, ready, addEntry, removeEntry, clearAll, knownExercises } =
     useWorkouts();
-  const todayReps = totalReps(todayEntries(entries));
+  // Avoid `new Date()` during prerender — only compute after client hydration.
+  const todayReps = useMemo(
+    () => (ready ? totalReps(todayEntries(entries)) : 0),
+    [ready, entries]
+  );
 
   return (
     <div className="relative min-h-full overflow-hidden">
