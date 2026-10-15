@@ -2,11 +2,14 @@
 
 import {
   byExercise,
+  formatVolume,
+  formatWeight,
   last7Days,
   pluralReps,
   pluralSets,
   todayEntries,
   totalReps,
+  totalVolume,
   weekEntries,
 } from "@/lib/stats";
 import type { WorkoutEntry } from "@/lib/types";
@@ -19,10 +22,14 @@ export function StatsPanel({ entries }: StatsPanelProps) {
   const today = totalReps(todayEntries(entries));
   const week = totalReps(weekEntries(entries));
   const all = totalReps(entries);
+  const volume = totalVolume(entries);
   const exerciseStats = byExercise(entries);
   const days = last7Days(entries);
   const maxDay = Math.max(...days.map((d) => d.reps), 1);
   const best = exerciseStats[0];
+  const heaviest = [...exerciseStats].sort(
+    (a, b) => b.bestWeightKg - a.bestWeightKg
+  )[0];
 
   if (entries.length === 0) {
     return (
@@ -40,10 +47,15 @@ export function StatsPanel({ entries }: StatsPanelProps) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-3 gap-3">
-        <StatTile label="Сегодня" value={today} />
-        <StatTile label="Неделя" value={week} />
-        <StatTile label="Всего" value={all} />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <StatTile label="Сегодня" value={today} unit={pluralReps(today)} />
+        <StatTile label="Неделя" value={week} unit={pluralReps(week)} />
+        <StatTile label="Всего" value={all} unit={pluralReps(all)} />
+        <StatTile
+          label="Тоннаж"
+          valueLabel={formatVolume(volume)}
+          unit="вес × повторы"
+        />
       </div>
 
       <div>
@@ -87,7 +99,24 @@ export function StatsPanel({ entries }: StatsPanelProps) {
           </p>
           <p className="text-sm text-[var(--brand-ink)]/80">
             {best.totalReps} {pluralReps(best.totalReps)} · {best.sets}{" "}
-            {pluralSets(best.sets)} · лучший подход {best.bestSet}
+            {pluralSets(best.sets)}
+            {best.bestWeightKg > 0
+              ? ` · макс. вес ${formatWeight(best.bestWeightKg)} кг`
+              : ` · лучший подход ${best.bestSet}`}
+          </p>
+        </div>
+      )}
+
+      {heaviest && heaviest.bestWeightKg > 0 && (
+        <div className="rounded-2xl bg-white/55 px-4 py-3">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Максимальный вес
+          </p>
+          <p className="mt-1 font-heading text-lg font-semibold tracking-tight">
+            {heaviest.exercise}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {formatWeight(heaviest.bestWeightKg)} кг за один подход
           </p>
         </div>
       )}
@@ -120,6 +149,12 @@ export function StatsPanel({ entries }: StatsPanelProps) {
                 <p className="mt-1.5 text-xs text-muted-foreground">
                   {stat.sets} {pluralSets(stat.sets)} · рекорд подхода{" "}
                   {stat.bestSet}
+                  {stat.bestWeightKg > 0
+                    ? ` · макс. ${formatWeight(stat.bestWeightKg)} кг`
+                    : ""}
+                  {stat.totalVolume > 0
+                    ? ` · тоннаж ${formatVolume(stat.totalVolume)}`
+                    : ""}
                 </p>
               </li>
             );
@@ -130,16 +165,26 @@ export function StatsPanel({ entries }: StatsPanelProps) {
   );
 }
 
-function StatTile({ label, value }: { label: string; value: number }) {
+function StatTile({
+  label,
+  value,
+  valueLabel,
+  unit,
+}: {
+  label: string;
+  value?: number;
+  valueLabel?: string;
+  unit: string;
+}) {
   return (
     <div className="rounded-2xl bg-white/60 px-3 py-4 text-center shadow-[0_1px_0_rgba(15,40,30,0.04)]">
       <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
         {label}
       </p>
       <p className="mt-1 font-heading text-2xl font-bold tabular-nums tracking-tight sm:text-3xl">
-        {value}
+        {valueLabel ?? value}
       </p>
-      <p className="text-[11px] text-muted-foreground">{pluralReps(value)}</p>
+      <p className="text-[11px] text-muted-foreground">{unit}</p>
     </div>
   );
 }

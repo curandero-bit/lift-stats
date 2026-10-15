@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { formatDateTime, pluralReps } from "@/lib/stats";
+import { formatDateTime, formatWeight, pluralReps } from "@/lib/stats";
 import type { WorkoutEntry } from "@/lib/types";
 
 type HistoryListProps = {
@@ -44,34 +44,38 @@ export function HistoryList({ entries, onRemove, onClear }: HistoryListProps) {
       </div>
 
       <ul className="space-y-2">
-        {entries.map((entry) => (
-          <li
-            key={entry.id}
-            className="group flex items-center justify-between gap-3 rounded-xl bg-white/55 px-3 py-3 transition-colors hover:bg-white/80"
-          >
-            <div className="min-w-0">
-              <p className="truncate font-medium">{entry.exercise}</p>
-              <p className="text-xs text-muted-foreground">
-                {formatDateTime(entry.createdAt)}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="rounded-lg bg-[var(--brand-soft)] px-2.5 py-1 font-heading text-sm font-semibold tabular-nums text-[var(--brand-ink)]">
-                {entry.reps} {pluralReps(entry.reps)}
-              </span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="opacity-70 transition-opacity group-hover:opacity-100"
-                onClick={() => onRemove(entry.id)}
-                aria-label="Удалить запись"
-              >
-                ✕
-              </Button>
-            </div>
-          </li>
-        ))}
+        {entries.map((entry) => {
+          const weightLabel = formatWeight(entry.weightKg ?? 0);
+          return (
+            <li
+              key={entry.id}
+              className="group flex items-center justify-between gap-3 rounded-xl bg-white/55 px-3 py-3 transition-colors hover:bg-white/80"
+            >
+              <div className="min-w-0">
+                <p className="truncate font-medium">{entry.exercise}</p>
+                <p className="text-xs text-muted-foreground">
+                  {formatDateTime(entry.createdAt)}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="rounded-lg bg-[var(--brand-soft)] px-2.5 py-1 font-heading text-sm font-semibold tabular-nums text-[var(--brand-ink)]">
+                  {weightLabel ? `${weightLabel} кг × ` : ""}
+                  {entry.reps} {pluralReps(entry.reps)}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="opacity-70 transition-opacity group-hover:opacity-100"
+                  onClick={() => onRemove(entry.id)}
+                  aria-label="Удалить запись"
+                >
+                  ✕
+                </Button>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

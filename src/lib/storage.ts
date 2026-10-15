@@ -1,20 +1,39 @@
 import { STORAGE_KEY, type WorkoutEntry } from "./types";
 
+function normalizeEntry(raw: unknown): WorkoutEntry | null {
+  if (!raw || typeof raw !== "object") return null;
+  const e = raw as Record<string, unknown>;
+  if (
+    typeof e.id !== "string" ||
+    typeof e.exercise !== "string" ||
+    typeof e.reps !== "number" ||
+    typeof e.createdAt !== "string"
+  ) {
+    return null;
+  }
+
+  const entry: WorkoutEntry = {
+    id: e.id,
+    exercise: e.exercise,
+    reps: e.reps,
+    createdAt: e.createdAt,
+  };
+
+  if (typeof e.weightKg === "number" && Number.isFinite(e.weightKg) && e.weightKg > 0) {
+    entry.weightKg = e.weightKg;
+  }
+
+  return entry;
+}
+
 export function loadEntries(): WorkoutEntry[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    const parsed = JSON.parse(raw) as WorkoutEntry[];
+    const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (e) =>
-        e &&
-        typeof e.id === "string" &&
-        typeof e.exercise === "string" &&
-        typeof e.reps === "number" &&
-        typeof e.createdAt === "string"
-    );
+    return parsed.map(normalizeEntry).filter((e): e is WorkoutEntry => e !== null);
   } catch {
     return [];
   }

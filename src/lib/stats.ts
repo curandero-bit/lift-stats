@@ -28,11 +28,22 @@ export function weekEntries(entries: WorkoutEntry[], now = new Date()): WorkoutE
   return entries.filter((e) => new Date(e.createdAt) >= start);
 }
 
+export function entryVolume(entry: WorkoutEntry): number {
+  const weight = entry.weightKg ?? 0;
+  return weight > 0 ? weight * entry.reps : 0;
+}
+
+export function totalVolume(entries: WorkoutEntry[]): number {
+  return entries.reduce((sum, e) => sum + entryVolume(e), 0);
+}
+
 export type ExerciseStat = {
   exercise: string;
   totalReps: number;
   sets: number;
   bestSet: number;
+  bestWeightKg: number;
+  totalVolume: number;
 };
 
 export function byExercise(entries: WorkoutEntry[]): ExerciseStat[] {
@@ -43,10 +54,14 @@ export function byExercise(entries: WorkoutEntry[]): ExerciseStat[] {
       totalReps: 0,
       sets: 0,
       bestSet: 0,
+      bestWeightKg: 0,
+      totalVolume: 0,
     };
     current.totalReps += e.reps;
     current.sets += 1;
     current.bestSet = Math.max(current.bestSet, e.reps);
+    current.bestWeightKg = Math.max(current.bestWeightKg, e.weightKg ?? 0);
+    current.totalVolume += entryVolume(e);
     map.set(e.exercise, current);
   }
   return Array.from(map.values()).sort((a, b) => b.totalReps - a.totalReps);
@@ -98,4 +113,19 @@ export function pluralSets(n: number): string {
   if (mod10 === 1 && mod100 !== 11) return "подход";
   if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "подхода";
   return "подходов";
+}
+
+export function formatWeight(kg: number): string {
+  if (!Number.isFinite(kg) || kg <= 0) return "";
+  const rounded = Math.round(kg * 10) / 10;
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+}
+
+export function formatVolume(kg: number): string {
+  if (!Number.isFinite(kg) || kg <= 0) return "0";
+  if (kg >= 1000) {
+    const tons = Math.round((kg / 1000) * 10) / 10;
+    return `${tons} т`;
+  }
+  return `${Math.round(kg)} кг`;
 }

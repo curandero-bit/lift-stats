@@ -2,6 +2,8 @@ export type WorkoutEntry = {
   id: string;
   exercise: string;
   reps: number;
+  /** Вес в кг; отсутствует или 0 — без отягощения */
+  weightKg?: number;
   createdAt: string;
 };
 

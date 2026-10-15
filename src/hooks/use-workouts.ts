@@ -5,6 +5,12 @@ import { createId, loadEntries, saveEntries } from "@/lib/storage";
 import type { WorkoutEntry } from "@/lib/types";
 import { DEFAULT_EXERCISES } from "@/lib/types";
 
+export type AddEntryInput = {
+  exercise: string;
+  reps: number;
+  weightKg?: number;
+};
+
 export function useWorkouts() {
   const [entries, setEntries] = useState<WorkoutEntry[]>([]);
   const [ready, setReady] = useState(false);
@@ -19,7 +25,7 @@ export function useWorkouts() {
     saveEntries(entries);
   }, [entries, ready]);
 
-  const addEntry = useCallback((exercise: string, reps: number) => {
+  const addEntry = useCallback(({ exercise, reps, weightKg }: AddEntryInput) => {
     const trimmed = exercise.trim();
     if (!trimmed || reps <= 0) return;
     const entry: WorkoutEntry = {
@@ -28,6 +34,9 @@ export function useWorkouts() {
       reps: Math.floor(reps),
       createdAt: new Date().toISOString(),
     };
+    if (typeof weightKg === "number" && Number.isFinite(weightKg) && weightKg > 0) {
+      entry.weightKg = Math.round(weightKg * 10) / 10;
+    }
     setEntries((prev) => [entry, ...prev]);
   }, []);
 
