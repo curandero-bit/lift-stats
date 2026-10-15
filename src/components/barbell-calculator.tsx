@@ -113,7 +113,15 @@ export function BarbellCalculator({ onApply }: BarbellCalculatorProps) {
               }}
             >
               <SelectTrigger id="bar-type" className="w-full bg-white/70">
-                <SelectValue />
+                <SelectValue>
+                  {(value: string | null) => {
+                    const bar = BAR_PRESETS.find((b) => b.id === value);
+                    if (!bar) return "Выберите гриф";
+                    return bar.id !== "custom"
+                      ? `${bar.name} · ${bar.weightKg} кг`
+                      : bar.name;
+                  }}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {BAR_PRESETS.map((bar) => (

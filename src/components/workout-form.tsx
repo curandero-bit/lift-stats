@@ -79,7 +79,11 @@ export function WorkoutForm({ exercises, onAdd }: WorkoutFormProps) {
           }}
         >
           <SelectTrigger id="exercise" className="w-full bg-white/70">
-            <SelectValue placeholder="Выберите упражнение" />
+            <SelectValue placeholder="Выберите упражнение">
+              {(value: string | null) =>
+                value === CUSTOM ? "Другое…" : (value ?? "Выберите упражнение")
+              }
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {exercises.map((name) => (

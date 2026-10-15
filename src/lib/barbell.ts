@@ -86,6 +86,6 @@ export function totalBarbellKg(barWeightKg: number, plates: PlateLine[]): number
 
 export function formatBarbellKg(kg: number): string {
   if (!Number.isFinite(kg)) return "0";
-  const rounded = Math.round(kg * 10) / 10;
-  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+  // Keep quarter-kilo plates accurate (1.25), strip trailing zeros.
+  return String(parseFloat(kg.toFixed(2)));
 }
