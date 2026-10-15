@@ -1,0 +1,154 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-heading);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --brand: #1f7a4c;
+  --brand-soft: #d8f0e3;
+  --brand-ink: #143d28;
+  --background: #eef6f1;
+  --foreground: #15231c;
+  --card: #ffffff;
+  --card-foreground: #15231c;
+  --popover: #ffffff;
+  --popover-foreground: #15231c;
+  --primary: #1f7a4c;
+  --primary-foreground: #f4fff8;
+  --secondary: #e2efe7;
+  --secondary-foreground: #1a3d2c;
+  --muted: #e2efe7;
+  --muted-foreground: #5a7265;
+  --accent: #e9f5ee;
+  --accent-foreground: #1a3d2c;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: rgb(20 61 40 / 12%);
+  --input: rgb(20 61 40 / 14%);
+  --ring: #1f7a4c;
+  --chart-1: #1f7a4c;
+  --chart-2: #3aa06a;
+  --chart-3: #6fbf8f;
+  --chart-4: #a8d9bc;
+  --chart-5: #d8f0e3;
+  --radius: 0.75rem;
+  --sidebar: #f7fbf8;
+  --sidebar-foreground: #15231c;
+  --sidebar-primary: #1f7a4c;
+  --sidebar-primary-foreground: #f4fff8;
+  --sidebar-accent: #e2efe7;
+  --sidebar-accent-foreground: #1a3d2c;
+  --sidebar-border: rgb(20 61 40 / 12%);
+  --sidebar-ring: #1f7a4c;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+  .font-heading {
+    font-family: var(--font-heading), var(--font-sans), sans-serif;
+  }
+}
+
+.bg-atmosphere {
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%, rgb(31 122 76 / 18%), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 95% 5%, rgb(251 191 36 / 16%), transparent 50%),
+    linear-gradient(165deg, #f4faf6 0%, #e8f3ec 42%, #dff0e6 100%);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.55s ease-out both;
+}
+
+.animate-rise-delayed {
+  animation: rise 0.65s ease-out 0.08s both;
+}
+
+.animate-rise-late {
+  animation: rise 0.7s ease-out 0.16s both;
+}
+
+.animate-float {
+  animation: float 9s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 11s ease-in-out 1.5s infinite;
+}
+
+.week-bar {
+  min-height: 0;
+}
